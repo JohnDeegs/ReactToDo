@@ -10325,15 +10325,25 @@ var Todo = exports.Todo = function (_React$Component) {
 
         _this.state = { tasks: props.tasks };
         _this.updateList = _this.updateList.bind(_this);
+        _this.removeTask = _this.removeTask.bind(_this);
         return _this;
     }
 
     (0, _createClass3.default)(Todo, [{
         key: 'updateList',
         value: function updateList(text) {
+            //gets current state of tasks array
             var updatedTasks = this.state.tasks;
+            //pushes the new value to this array
             updatedTasks.push(text);
-
+            //sets the new state of the array after element pushed to array
+            this.setState({ tasks: updatedTasks });
+        }
+    }, {
+        key: 'removeTask',
+        value: function removeTask(text) {
+            var updatedTasks = this.state.tasks;
+            updatedTasks.splice(updatedTasks.indexOf(text), 1);
             this.setState({ tasks: updatedTasks });
         }
     }, {
@@ -10348,7 +10358,7 @@ var Todo = exports.Todo = function (_React$Component) {
                     'ToDo App'
                 ),
                 _react2.default.createElement(_addTask.AddNewTask, { updateList: this.updateList }),
-                _react2.default.createElement(_appList.ToDoAppList, { tasks: this.state.tasks })
+                _react2.default.createElement(_appList.ToDoAppList, { tasks: this.state.tasks, remove: this.removeTask })
             );
         }
     }]);
@@ -10480,17 +10490,38 @@ var ToDoAppList = exports.ToDoAppList = function (_React$Component) {
 
     function ToDoAppList() {
         (0, _classCallCheck3.default)(this, ToDoAppList);
-        return (0, _possibleConstructorReturn3.default)(this, (ToDoAppList.__proto__ || (0, _getPrototypeOf2.default)(ToDoAppList)).call(this));
+
+        var _this = (0, _possibleConstructorReturn3.default)(this, (ToDoAppList.__proto__ || (0, _getPrototypeOf2.default)(ToDoAppList)).call(this));
+
+        _this.remove = _this.remove.bind(_this);
+        return _this;
     }
 
     (0, _createClass3.default)(ToDoAppList, [{
+        key: 'remove',
+        value: function remove(elem) {
+            var value = elem.target.parentNode.querySelector('span').innerText;
+            this.props.remove(value);
+        }
+    }, {
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             var items = this.props.tasks.map(function (elem, i) {
                 return _react2.default.createElement(
                     'li',
                     { key: i },
-                    elem
+                    _react2.default.createElement(
+                        'span',
+                        null,
+                        elem
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { onClick: _this2.remove },
+                        'x'
+                    )
                 );
             });
             return _react2.default.createElement(
