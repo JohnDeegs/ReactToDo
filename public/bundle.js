@@ -10318,12 +10318,25 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var Todo = exports.Todo = function (_React$Component) {
     (0, _inherits3.default)(Todo, _React$Component);
 
-    function Todo() {
+    function Todo(props) {
         (0, _classCallCheck3.default)(this, Todo);
-        return (0, _possibleConstructorReturn3.default)(this, (Todo.__proto__ || (0, _getPrototypeOf2.default)(Todo)).call(this));
+
+        var _this = (0, _possibleConstructorReturn3.default)(this, (Todo.__proto__ || (0, _getPrototypeOf2.default)(Todo)).call(this));
+
+        _this.state = { tasks: props.tasks };
+        _this.updateList = _this.updateList.bind(_this);
+        return _this;
     }
 
     (0, _createClass3.default)(Todo, [{
+        key: 'updateList',
+        value: function updateList(text) {
+            var updatedTasks = this.state.tasks;
+            updatedTasks.push(text);
+
+            this.setState({ tasks: updatedTasks });
+        }
+    }, {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
@@ -10334,8 +10347,8 @@ var Todo = exports.Todo = function (_React$Component) {
                     null,
                     'ToDo App'
                 ),
-                _react2.default.createElement(_addTask.AddNewTask, null),
-                _react2.default.createElement(_appList.ToDoAppList, null)
+                _react2.default.createElement(_addTask.AddNewTask, { updateList: this.updateList }),
+                _react2.default.createElement(_appList.ToDoAppList, { tasks: this.state.tasks })
             );
         }
     }]);
@@ -10395,16 +10408,29 @@ var AddNewTask = exports.AddNewTask = function (_React$Component) {
 
     function AddNewTask() {
         (0, _classCallCheck3.default)(this, AddNewTask);
-        return (0, _possibleConstructorReturn3.default)(this, (AddNewTask.__proto__ || (0, _getPrototypeOf2.default)(AddNewTask)).call(this));
+
+        var _this = (0, _possibleConstructorReturn3.default)(this, (AddNewTask.__proto__ || (0, _getPrototypeOf2.default)(AddNewTask)).call(this));
+
+        _this.justSubmitted = _this.justSubmitted.bind(_this);
+        return _this;
     }
 
     (0, _createClass3.default)(AddNewTask, [{
-        key: "render",
+        key: 'justSubmitted',
+        value: function justSubmitted(event) {
+            event.preventDefault();
+            var input = event.target.querySelector('input');
+            var value = input.value;
+            input.value = '';
+            this.props.updateList(value);
+        }
+    }, {
+        key: 'render',
         value: function render() {
             return _react2.default.createElement(
-                "form",
-                null,
-                _react2.default.createElement("input", { type: "text" })
+                'form',
+                { onSubmit: this.justSubmitted },
+                _react2.default.createElement('input', { type: 'text' })
             );
         }
     }]);
@@ -10460,24 +10486,17 @@ var ToDoAppList = exports.ToDoAppList = function (_React$Component) {
     (0, _createClass3.default)(ToDoAppList, [{
         key: 'render',
         value: function render() {
+            var items = this.props.tasks.map(function (elem, i) {
+                return _react2.default.createElement(
+                    'li',
+                    { key: i },
+                    elem
+                );
+            });
             return _react2.default.createElement(
                 'ul',
                 null,
-                _react2.default.createElement(
-                    'li',
-                    null,
-                    'Task 1'
-                ),
-                _react2.default.createElement(
-                    'li',
-                    null,
-                    'Task 2'
-                ),
-                _react2.default.createElement(
-                    'li',
-                    null,
-                    'Task 3'
-                )
+                items
             );
         }
     }]);
@@ -10503,7 +10522,9 @@ var _main = __webpack_require__(127);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_reactDom2.default.render(_react2.default.createElement(_main.Todo, null), document.getElementById('app'));
+var tasksList = ["task 1", "task 2", "task 3"];
+
+_reactDom2.default.render(_react2.default.createElement(_main.Todo, { tasks: tasksList }), document.getElementById('app'));
 
 /***/ }),
 /* 132 */
